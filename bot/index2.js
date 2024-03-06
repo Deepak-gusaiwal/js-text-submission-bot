@@ -1,0 +1,53 @@
+import puppeteer from "puppeteer";
+import xlsx from "xlsx";
+
+// Function to read data from Excel file
+function readExcel(filePath) {
+  const workbook = xlsx.readFile(filePath);
+  const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+  return xlsx.utils.sheet_to_json(worksheet);
+}
+
+// Define the path to the Excel file
+const excelFilePath = "../name.xlsx";
+
+// Read data from Excel file
+const data = readExcel(excelFilePath);
+
+// Launch Puppeteer browser and create a new page
+(async () => {
+  const browser = await puppeteer.launch({ headless: false });
+  const page = await browser.newPage();
+
+  try {
+    const URL = "http://localhost:5173/";
+    await page.goto(URL);
+
+    // Iterate over each item in the data array and post data
+    for (const item of data) {
+      await postData(page, item);
+    }
+
+    console.log("All data filled in the input field and submitted successfully!");
+  } catch (error) {
+    console.error("Error:", error);
+  } finally {
+    // Close the browser
+    console.log("Finally closed");
+    // await browser.close();
+  }
+})();
+
+// Function to post data to the URL using the provided page instance
+const postData = async (page, item) => {
+  try {
+    await page.type("#name", item.Names.toString());
+    await page.click("#submit");
+    // await page.waitForTimeout(1000); // Wait for a short delay
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
+    console.log("Data filled in the input field and submitted successfully for:", item);
+  } catch (error) {
+    console.error("Error:", error);
+  }
+};
