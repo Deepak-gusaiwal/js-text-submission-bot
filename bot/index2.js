@@ -40,6 +40,10 @@ const data = readExcel(excelFilePath);
 
 // Function to post data to the URL using the provided page instance
 const postData = async (page, item) => {
+  if(!item.Names){
+    console.log('Data Over',item.Names)
+    return
+}
   try {
     await page.type("#name", item.Names.toString());
     await page.click("#submit");

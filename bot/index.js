@@ -16,6 +16,10 @@ const data = readExcel(excelFilePath);
 
 // Function to post data to each URL
 const postData = async (item) => {
+  if(!item.Names){
+    console.log('Data Over',item.Names)
+    return
+}
   // Launch Puppeteer browser
   // const browser = await puppeteer.launch();
   const browser = await puppeteer.launch({ headless: false });
